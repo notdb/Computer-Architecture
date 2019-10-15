@@ -67,7 +67,9 @@ class CPU:
         pass
 
     def ram_read(self, MAR):
-        pass
+        if MAR not in self.memory:
+            return print('MAR not found')
+        return self.memory[MAR]
 
     def ram_write(self, MAR, MDR):
-        pass
+        return self.memory[MAR] == MDR
