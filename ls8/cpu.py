@@ -64,7 +64,7 @@ class CPU:
         print()
 
     def run(self):
-        ir = self.ram[self.pc]
+        #ir = self.ram[self.pc]
         operand_a = self.ram_read(self.pc+1)
         print(f'{operand_a} foo')
         operand_b = self.ram_read(self.pc+2)
@@ -74,14 +74,15 @@ class CPU:
         #print(self.ram[self.pc+2])
         while self.running:
             command = self.ram[self.pc]
-            print(command)
+            #print(f'{command} this is the command')
             #LDI - set value of register to integer
             if command == 130:
                 self.register[operand_a] = operand_b
-                print(self.pc)
-                print(ir)
-                print(f'{self.ram} NAME')
-                self.pc+1
+                #print(self.pc)
+                #print(ir)
+                #print(f'{self.ram} NAME')
+                self.pc += 3
+                #print(f'{self.pc} FOOOOO')
             #HLT - stops the program
             elif command == 1:
                 self.running = False
@@ -89,7 +90,7 @@ class CPU:
             #PRN - prints next digit in register
             elif command == 71:
                 num = print(self.ram[self.pc+1])
-                self.pc += 1
+                self.pc += 2
     def ram_read(self, MAR):
         return self.ram[MAR]
 
