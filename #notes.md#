@@ -104,3 +104,4 @@ while running:
     else:
         print(f"Unknown instruction: {command}")
         sys.exit(1)
+
