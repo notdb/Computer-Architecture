@@ -50,9 +50,9 @@ class CPU:
                         
                     print(comment_split)
                     if len(num) == 8:
-                        print(f'{type(num)}: {len(num)} {num} FOOBAR')
+                        #print(f'{type(num)}: {len(num)} {num} FOOBAR')
                         val = int(num, 2)
-                        print(f'{val} TEST TEST')
+                        #print(f'{val} TEST TEST')
                         self.ram[address] = val
                         address += 1
                     else:
@@ -73,9 +73,10 @@ class CPU:
             self.register[reg_a] += self.register[reg_b]
         #elif op == "SUB": etc
         elif op == "MUL":
-            print(reg_a)
-            print(reg_b)
+            print(f'{reg_a} PRINT REG A')
+            print(f'{reg_b} PRINT REG B')
             self.register[reg_a] *= self.register[reg_b]
+            print(self.register)
         else:
             raise Exception("Unsupported ALU operation")
 
