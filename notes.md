@@ -104,3 +104,7 @@ while running:
     else:
         print(f"Unknown instruction: {command}")
         sys.exit(1)
+
+find a way to print operand_a/b
+
+F3  Start of Stack   

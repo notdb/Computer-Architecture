@@ -102,7 +102,8 @@ class CPU:
 
     def run(self):
         #ir = self.ram[self.pc]
-        
+        sp = self.register[7] 
+        print(f'{sp} This is the stack pointer')
         #print(f'{operand_a} foo')
         
         #print(f'{operand_b} bar')
