@@ -72,6 +72,10 @@ class CPU:
         if op == "ADD":
             self.register[reg_a] += self.register[reg_b]
         #elif op == "SUB": etc
+        elif op == "MUL":
+            print(reg_a)
+            print(reg_b)
+            self.register[reg_a] *= self.register[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -97,16 +101,18 @@ class CPU:
 
     def run(self):
         #ir = self.ram[self.pc]
-        operand_a = self.ram_read(self.pc+1)
-        print(f'{operand_a} foo')
-        operand_b = self.ram_read(self.pc+2)
-        print(f'{operand_b} bar')
+        
+        #print(f'{operand_a} foo')
+        
+        #print(f'{operand_b} bar')
         self.trace()
         #print(self.ram[self.pc+1])
         #print(self.ram[self.pc+2])
         print(self.ram)
         while self.running:
             command = self.ram[self.pc]
+            operand_a = self.ram_read(self.pc+1)
+            operand_b = self.ram_read(self.pc+2)
             #print(f'{command} this is the command')
             #LDI - set value of register to integer
             if command == 130:
@@ -124,6 +130,13 @@ class CPU:
             elif command == 71:
                 num = print(self.ram[self.pc+1])
                 self.pc += 2
+            elif command == 162:
+                print(f'{operand_a} ONE')
+                print(self.pc)
+                print(f'{operand_b} TWO')
+                print(f'{self.register} THREE')
+                self.alu("MUL", operand_a, operand_b)
+                self.pc += 3
     def ram_read(self, MAR):
         return self.ram[MAR]
 

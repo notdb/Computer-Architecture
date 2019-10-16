@@ -105,3 +105,4 @@ while running:
         print(f"Unknown instruction: {command}")
         sys.exit(1)
 
+find a way to print operand_a/b

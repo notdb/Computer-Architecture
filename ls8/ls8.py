@@ -8,5 +8,5 @@ from cpu import *
 cpu = CPU()
 
 #cpu.load()
-cpu.load_management("examples/print8.ls8")
+cpu.load_management("examples/mult.ls8")
 cpu.run()
