@@ -102,7 +102,8 @@ class CPU:
 
     def run(self):
         #ir = self.ram[self.pc]
-        sp = self.register[7] = 243
+        self.register[7] = 243
+        sp = self.register[7]
         
         print(f'{sp} This is the stack pointer')
         #print(f'{operand_a} foo')
@@ -131,7 +132,7 @@ class CPU:
                 self.pc += 1
             #PRN - prints next digit in register
             elif command == 71:
-                num = print(self.ram[self.pc+1])
+                num = print(self.register[operand_a])
                 self.pc += 2
             elif command == 162:
                 print(f'{operand_a} ONE')
@@ -145,16 +146,24 @@ class CPU:
                 #print(f'{sp} START')
                 sp -= 1
                 self.ram[sp] = self.register[operand_a]
+                #print(self.ram)
+                '''
+
+    Decrement the SP.
+    Copy the value in the given register to the address pointed to by SP.
+'''
+                #print(self.register[operand_a])
+                #self.register[operand_a] = self.ram[sp]
                 #print(self.ram[sp])
                 #print(f'{sp} START2')
-                
                 self.pc += 2
             #POP  
             elif command == 70:
                 #print(f'{sp} FINISH')
                 self.register[operand_a] = self.ram[sp]
+                #self.ram[sp] = self.register[operand_a]
                 #print(self.ram[sp])
-                #print(operand_a)
+               # print(self.register[operand_a])
                 #print(f'{self.register[operand_a]} FINISH')
                 #print(self.ram[sp])
                 sp += 1
