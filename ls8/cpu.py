@@ -102,7 +102,8 @@ class CPU:
 
     def run(self):
         #ir = self.ram[self.pc]
-        sp = self.register[7] 
+        sp = self.register[7] = 243
+        
         print(f'{sp} This is the stack pointer')
         #print(f'{operand_a} foo')
         
@@ -139,6 +140,26 @@ class CPU:
                 print(f'{self.register} THREE')
                 self.alu("MUL", operand_a, operand_b)
                 self.pc += 3
+            #nice/PUSH  
+            elif command == 69:
+                #print(f'{sp} START')
+                sp -= 1
+                self.ram[sp] = self.register[operand_a]
+                #print(self.ram[sp])
+                #print(f'{sp} START2')
+                
+                self.pc += 2
+            #POP  
+            elif command == 70:
+                #print(f'{sp} FINISH')
+                self.register[operand_a] = self.ram[sp]
+                #print(self.ram[sp])
+                #print(operand_a)
+                #print(f'{self.register[operand_a]} FINISH')
+                #print(self.ram[sp])
+                sp += 1
+                #print(f'{sp} FINISH2')
+                self.pc += 2
     def ram_read(self, MAR):
         return self.ram[MAR]
 

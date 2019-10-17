@@ -107,4 +107,4 @@ while running:
 
 find a way to print operand_a/b
 
-F3  Start of Stack   
+F3  Start of Stack (243 or 1111 0011)
