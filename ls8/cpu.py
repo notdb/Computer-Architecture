@@ -7,7 +7,12 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        self.ram = [0] * 255
+        self.pc = 0
+        self.register = [0] * 8
+        self.running = True
+        self.garbage = []
+        self.fl = [0] * 8
 
     def load(self):
         """Load a program into memory."""
@@ -30,13 +35,78 @@ class CPU:
             self.ram[address] = instruction
             address += 1
 
+    def load_management(self, filename):
+        try:
+            address = 0
 
+            with open(filename) as f:
+                for line in f:
+                    # ignore comments
+                    comment_split = line.split("#")
+
+                    # Convert from binary to int
+                    num = comment_split[0].strip()
+                    
+                    #try:
+                        
+                    print(comment_split)
+                    if len(num) == 8:
+                        #print(f'{type(num)}: {len(num)} {num} FOOBAR')
+                        val = int(num, 2)
+                        #print(f'{val} TEST TEST')
+                        self.ram[address] = val
+                        address += 1
+                    else:
+                        self.garbage.append(num)
+                    #except ValueError:
+                        #continue
+                    
+                    #print(f"{val:08b}: {val:d}: {val}")
+            print(self.garbage)
+        except FileNotFoundError:
+            print(f"{sys.argv[0]}: {sys.argv[1]} not found")
+            sys.exit(2)
+            
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
 
         if op == "ADD":
-            self.reg[reg_a] += self.reg[reg_b]
+            self.register[reg_a] += self.register[reg_b]
         #elif op == "SUB": etc
+        elif op == "MUL":
+            print(f'{reg_a} PRINT REG A')
+            print(f'{reg_b} PRINT REG B')
+            self.register[reg_a] *= self.register[reg_b]
+            print(self.register)
+        elif op == "CMP":
+            '''
+            if reg_a > reg_b:
+                print('hello')
+                self.fl[5] = 1
+                self.fl[6] = 0
+                self.fl[7] = 0
+            if reg_b > reg_a:
+                print('byebye')
+                print(self.fl)
+                print(reg_a)
+                print(reg_b)
+                print(self.register)
+                self.fl[6] = 1
+                self.fl[5] = 0
+                self.fl[7] = 0
+            '''
+            #print(reg_a)
+            #print(reg_b)
+            if self.register[reg_a] == self.register[reg_b]:
+                print('equal')
+                #print(reg_a)
+                #print(reg_b)
+                self.fl[7] = 1
+                self.fl[6] = 0
+                self.fl[5] = 0
+            else:
+                print('not equal')
+                self.fl[7] = 0
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -56,10 +126,118 @@ class CPU:
         ), end='')
 
         for i in range(8):
-            print(" %02X" % self.reg[i], end='')
+            print(" %02X" % self.register[i], end='')
 
         print()
 
     def run(self):
-        """Run the CPU."""
-        pass
+        #ir = self.ram[self.pc]
+        self.register[7] = 243
+        sp = self.register[7]
+        
+        print(f'{sp} This is the stack pointer')
+        #print(f'{operand_a} foo')
+        
+        #print(f'{operand_b} bar')
+        self.trace()
+        #print(self.ram[self.pc+1])
+        #print(self.ram[self.pc+2])
+        print(self.ram)
+        while self.running:
+            command = self.ram[self.pc]
+            operand_a = self.ram_read(self.pc+1)
+            operand_b = self.ram_read(self.pc+2)
+            #print(f'{command} this is the command')
+            #LDI - set value of register to integer
+            if command == 130:
+                self.register[operand_a] = operand_b
+                #print(self.pc)
+                #print(ir)
+                #print(f'{self.ram} NAME')
+                self.pc += 3
+                #print(f'{self.pc} FOOOOO')
+            #HLT - stops the program
+            elif command == 1:
+                self.running = False
+                self.pc += 1
+            #PRN - prints next digit in register
+            elif command == 71:
+                num = print(self.register[operand_a])
+                print(f'{self.register} TEST')
+                self.pc += 2
+            elif command == 162:
+                print(f'{operand_a} ONE')
+                print(self.pc)
+                print(f'{operand_b} TWO')
+                print(f'{self.register} THREE')
+                self.alu("MUL", operand_a, operand_b)
+                self.pc += 3
+            #CMP
+            elif command == 167:
+                self.alu("CMP", operand_a, operand_b)
+                #print(self.fl)
+                self.pc += 3
+            #JMP
+            elif command == 84:
+                #print('test')
+                #print(operand_a)
+                #print(self.ram)
+                #self.ram[operand_a]
+                self.pc = self.register[operand_a]
+            #JEQ
+            elif command == 85:
+                #print('foo')
+                #print(self.fl)
+                #print(self.ram)
+                #print(operand_a)
+                if self.fl[7] == 1:
+                    self.pc = self.register[operand_a]
+                else:
+                    self.pc += 2
+            #JNE
+            elif command == 86:
+                #print('bar')
+                #print(self.fl)
+                #print(self.register)
+                #print(operand_a)
+                #print(self.register[operand_a])
+                if self.fl[7] == 0:
+                    self.pc = self.register[operand_a]
+                    #print(self.pc)
+                    #print(self.ram[self.pc])
+                else:
+                    self.pc += 2
+            #nice/PUSH  
+            elif command == 69:
+                #print(f'{sp} START')
+                sp -= 1
+                self.ram[sp] = self.register[operand_a]
+                #print(self.ram)
+                '''
+
+    Decrement the SP.
+    Copy the value in the given register to the address pointed to by SP.
+'''
+                #print(self.register[operand_a])
+                #self.register[operand_a] = self.ram[sp]
+                #print(self.ram[sp])
+                #print(f'{sp} START2')
+                self.pc += 2
+            #POP  
+            elif command == 70:
+                #print(f'{sp} FINISH')
+                self.register[operand_a] = self.ram[sp]
+                #self.ram[sp] = self.register[operand_a]
+                #print(self.ram[sp])
+               # print(self.register[operand_a])
+                #print(f'{self.register[operand_a]} FINISH')
+                #print(self.ram[sp])
+                sp += 1
+                #print(f'{sp} FINISH2')
+                self.pc += 2
+                
+    def ram_read(self, MAR):
+        return self.ram[MAR]
+
+    def ram_write(self, MAR, MDR):
+        self.ram[MAR] = MDR
