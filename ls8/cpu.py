@@ -12,6 +12,7 @@ class CPU:
         self.register = [0] * 8
         self.running = True
         self.garbage = []
+        self.fl = [0] * 8
 
     def load(self):
         """Load a program into memory."""
@@ -77,6 +78,35 @@ class CPU:
             print(f'{reg_b} PRINT REG B')
             self.register[reg_a] *= self.register[reg_b]
             print(self.register)
+        elif op == "CMP":
+            '''
+            if reg_a > reg_b:
+                print('hello')
+                self.fl[5] = 1
+                self.fl[6] = 0
+                self.fl[7] = 0
+            if reg_b > reg_a:
+                print('byebye')
+                print(self.fl)
+                print(reg_a)
+                print(reg_b)
+                print(self.register)
+                self.fl[6] = 1
+                self.fl[5] = 0
+                self.fl[7] = 0
+            '''
+            #print(reg_a)
+            #print(reg_b)
+            if self.register[reg_a] == self.register[reg_b]:
+                print('equal')
+                #print(reg_a)
+                #print(reg_b)
+                self.fl[7] = 1
+                self.fl[6] = 0
+                self.fl[5] = 0
+            else:
+                print('not equal')
+                self.fl[7] = 0
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -133,6 +163,7 @@ class CPU:
             #PRN - prints next digit in register
             elif command == 71:
                 num = print(self.register[operand_a])
+                print(f'{self.register} TEST')
                 self.pc += 2
             elif command == 162:
                 print(f'{operand_a} ONE')
@@ -141,6 +172,41 @@ class CPU:
                 print(f'{self.register} THREE')
                 self.alu("MUL", operand_a, operand_b)
                 self.pc += 3
+            #CMP
+            elif command == 167:
+                self.alu("CMP", operand_a, operand_b)
+                #print(self.fl)
+                self.pc += 3
+            #JMP
+            elif command == 84:
+                #print('test')
+                #print(operand_a)
+                #print(self.ram)
+                #self.ram[operand_a]
+                self.pc = self.register[operand_a]
+            #JEQ
+            elif command == 85:
+                #print('foo')
+                #print(self.fl)
+                #print(self.ram)
+                #print(operand_a)
+                if self.fl[7] == 1:
+                    self.pc = self.register[operand_a]
+                else:
+                    self.pc += 2
+            #JNE
+            elif command == 86:
+                #print('bar')
+                #print(self.fl)
+                #print(self.register)
+                #print(operand_a)
+                #print(self.register[operand_a])
+                if self.fl[7] == 0:
+                    self.pc = self.register[operand_a]
+                    #print(self.pc)
+                    #print(self.ram[self.pc])
+                else:
+                    self.pc += 2
             #nice/PUSH  
             elif command == 69:
                 #print(f'{sp} START')
@@ -169,6 +235,7 @@ class CPU:
                 sp += 1
                 #print(f'{sp} FINISH2')
                 self.pc += 2
+                
     def ram_read(self, MAR):
         return self.ram[MAR]
 
